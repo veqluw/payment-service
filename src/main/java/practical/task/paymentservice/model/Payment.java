@@ -13,8 +13,8 @@ public class Payment {
     @Id
     private String id;
 
-    private Integer orderId;
-    private Integer userId;
+    private String orderId;
+    private String userId;
     private String status;
     private Integer paymentAmount;
     private Instant createdAt;
