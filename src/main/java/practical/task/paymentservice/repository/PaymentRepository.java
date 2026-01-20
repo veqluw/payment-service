@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.repository.Query;
 import practical.task.paymentservice.model.Payment;
 
 import java.time.Instant;
+import java.util.List;
 
 public interface PaymentRepository extends MongoRepository<Payment, String> {
 
@@ -23,4 +24,10 @@ public interface PaymentRepository extends MongoRepository<Payment, String> {
             "{ $group: { _id: null, total: { $sum: '$amount' } } }"
     })
     Long getTotalSumForAllUsersInDateRange(Instant start, Instant end);
+
+    List<Payment> findPaymentsByUserId(String userId);
+
+    List<Payment> findPaymentsByOrderId(String orderId);
+
+    List<Payment> findPaymentsByStatus(String status);
 }
