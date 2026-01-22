@@ -3,11 +3,13 @@ package practical.task.paymentservice.repository;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
+import org.springframework.stereotype.Repository;
 import practical.task.paymentservice.model.Payment;
 
 import java.time.Instant;
 import java.util.List;
 
+@Repository
 public interface PaymentRepository extends MongoRepository<Payment, String> {
 
     @Query("{'user_id' : ?0}")
