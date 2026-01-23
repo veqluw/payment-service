@@ -10,7 +10,8 @@ import practical.task.paymentservice.service.PaymentService;
 
 import java.util.List;
 
-@RestController("/payments")
+@RestController
+@RequestMapping("/payments")
 public class PaymentController {
 
     private final PaymentService paymentService;
@@ -33,11 +34,11 @@ public class PaymentController {
 
     @GetMapping("/by-order")
     public List<PaymentResponseDto> getByOrderId(@RequestParam String orderId) {
-        return paymentService.getByUserId(orderId);
+        return paymentService.getByOrderId(orderId);
     }
 
     @GetMapping("/by-status")
     public List<PaymentResponseDto> getByStatus(@RequestParam String status) {
-        return paymentService.getByUserId(status.toUpperCase());
+        return paymentService.getByStatus(status.toUpperCase());
     }
 }
