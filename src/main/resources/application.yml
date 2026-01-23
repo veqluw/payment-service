@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://admin:admin@atlas.h5fd4y2.mongodb.net/?appName=Atlas
+      uri: ${URI_MONGODB}
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yml
