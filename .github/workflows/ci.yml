@@ -10,19 +10,22 @@ jobs:
     name: Build & Test & Analyze
     runs-on: ubuntu-latest
 
+    env:
+      URI_MONGODB: mongodb://admin:admin@mongo:27017/paymentdb?authSource=admin
+
     services:
-      postgres:
-        image: postgres:15
+      mongo:
+        image: mongo:7
         env:
-          POSTGRES_DB: test
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          MONGO_INITDB_DATABASE: test
+          MONGO_INITDB_ROOT_USERNAME: postgres
+          MONGO_INITDB_ROOT_PASSWORD: postgres
         ports:
-          - 5432:5432
+          - 27017:27017
         options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=5s
-          --health-timeout=5s
+          --health-cmd="mongosh --eval 'db.adminCommand(\"ping\")'" 
+          --health-interval=5s 
+          --health-timeout=5s 
           --health-retries=5
 
     steps:
