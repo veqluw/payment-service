@@ -2,8 +2,10 @@ package practical.task.paymentservice.service.impl;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import practical.task.paymentservice.dto.PaymentCreateDto;
+import practical.task.common.event.PaymentCreatedEvent;
 import practical.task.paymentservice.dto.PaymentResponseDto;
 import practical.task.paymentservice.mapper.PaymentMapper;
 import practical.task.paymentservice.misc.PaymentStatus;
@@ -20,15 +22,18 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
     private final RandomNumberClient randomNumberClient;
+    private final KafkaTemplate<String, PaymentCreatedEvent> kafkaTemplate;
 
     @Autowired
     public PaymentServiceImpl(PaymentRepository paymentRepository,
                               PaymentMapper paymentMapper,
-                              RandomNumberClient randomNumberClient
-                              ) {
+                              RandomNumberClient randomNumberClient,
+                              KafkaTemplate<String, PaymentCreatedEvent> kafkaTemplate
+    ) {
         this.paymentRepository = paymentRepository;
         this.paymentMapper = paymentMapper;
         this.randomNumberClient = randomNumberClient;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
@@ -39,6 +44,14 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setStatus(isEven(randomNumber) ? PaymentStatus.SUCCESS.toString() : PaymentStatus.FAILED.toString());
 
         paymentRepository.save(payment);
+
+        PaymentCreatedEvent event = new PaymentCreatedEvent(
+                payment.getId(),
+                payment.getOrderId(),
+                payment.getStatus()
+        );
+
+        kafkaTemplate.send("create-payment", payment.getId(), event);
 
         return paymentMapper.toDto(payment);
     }
